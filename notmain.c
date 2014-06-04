@@ -9,14 +9,13 @@ typedef enum
     true  = 1,
 } bool;
 
-char stack[10];
+char stack[20];
 int idx;
-int top;
 
 void
 push (char x)
 {
-  assert (idx < 10);
+  assert (idx < 20);
   stack[idx++] = x;
 }
 
@@ -76,5 +75,69 @@ main (int argc, char *argv[])
       printf ("%c ", pop ());
     }
 
+  printf ("\n\n=============\n");
+  double calculate_suffix (char []);
+  char t_suffix[] = "931-3*+12/+";
+  printf ("%s\n", t_suffix);
+  printf ("%f\n", calculate_suffix (t_suffix));
+
   return 0;
+}
+
+
+double stack2[20];
+int idx2;
+
+void
+push2 (double x)
+{
+  assert (idx2 < 20);
+  stack2[idx2++] = x;
+}
+
+double
+pop2 ()
+{
+  assert (idx2 > 0);
+  return stack2[--idx2];
+}
+
+
+
+double
+calculate_suffix (char suffix[])
+{
+  int i;
+  double tmp;
+
+  idx2 = 0;
+  for (i = 0; i < strlen (suffix); i++) {
+    /* printf ("%c", suffix[i]); */
+    if (isdigit(suffix[i]))
+      push2 (suffix[i] - '0');
+    else
+      switch (suffix[i]) {
+      case '+':
+        push2 (pop2 () + pop2 ());
+        break;
+      case '*':
+        push2 (pop2 () * pop2 ());
+        break;
+      case '-':
+        tmp = pop2();
+        push2 (pop2 () - tmp);
+        break;
+      case '/':
+        tmp = pop2();
+        assert (tmp != 0);
+        push2 (pop2 () / tmp);
+        break;
+      default:
+        assert(0);
+        break;
+      }
+  }
+
+  assert(idx2 == 1);
+  return stack2[idx2-1];
 }
