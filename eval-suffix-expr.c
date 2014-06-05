@@ -152,20 +152,6 @@ double *sp;
 #define pop3(sp) (*--(sp))
 #define push3(sp, n) (*((sp)++) = (n))
 
-void
-push2 (double x)
-{
-  assert (idx2 < 20);
-  stack2[idx2++] = x;
-}
-
-double
-pop2 ()
-{
-  assert (idx2 > 0);
-  return stack2[--idx2];
-}
-
 double
 calculate_suffix ()
 {
