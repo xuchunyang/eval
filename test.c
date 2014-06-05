@@ -18,6 +18,8 @@ main(int argc, char *argv[])
     }
   printf ("%s = %.2f\n", expr, rtv);
 
+  void other_test_cases ();
+  other_test_cases ();
   return 0;
 }
 
@@ -29,5 +31,7 @@ other_test_cases ()
 
   assert(eval_suffix_expr(expr, &cal_error) == 1*3-2/10.3+32.23);
   assert(eval_suffix_expr("1+2-3*4.5/5", &cal_error) == 1+2-3*4.5/5);
+  assert(eval_suffix_expr("1+2+3*4.5/5", &cal_error) == 1+2+3*4.5/5);
   assert(eval_suffix_expr("1/0.1", &cal_error) == 1/0.1);
+  assert(eval_suffix_expr("(1+3.2)", &cal_error) == 1+3.2);
 }

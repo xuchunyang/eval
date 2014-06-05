@@ -146,7 +146,11 @@ convert_to_suffix ()
 }
 
 double stack2[20];
-int idx2;
+
+double *sp;
+
+#define pop3(sp) (*--(sp))
+#define push3(sp, n) (*((sp)++) = (n))
 
 void
 push2 (double x)
@@ -166,42 +170,47 @@ double
 calculate_suffix ()
 {
   int i;
-  double tmp;
+  double a, b;
 
-  idx2 = 0;
+  sp = stack2;
+
   for (i = 0; i < si; i++) {
     if (suffix[i].type == NUMBER)
-      push2 (suffix[i].data);
+      push3 (sp, suffix[i].data);
     else
       switch (suffix[i].type) {
       case '+':
-        push2 (pop2 () + pop2 ());
+        a = pop3 (sp);
+        b = pop3 (sp);
+        push3 (sp, a + b);
         break;
       case '*':
-        push2 (pop2 () * pop2 ());
+        a = pop3 (sp);
+        b = pop3 (sp);
+        push3 (sp, a * b);
         break;
       case '-':
-        tmp = pop2();
-        push2 (pop2 () - tmp);
+        a = pop3 (sp);
+        b = pop3 (sp);
+        push3 (sp, b - a);
         break;
       case '/':
-        tmp = pop2();
-        if (tmp == 0)
+        a = pop3 (sp);
+        b = pop3 (sp);
+        if (a == 0)
           {
             ERROR.code = 1;
             ERROR.message = strdup("Error: div-by-zero");
             return 0.0;
           }
-        push2 (pop2 () / tmp);
+        push3 (sp, b / a);
         break;
       default:
         assert(0);
         break;
       }
   }
-
-  assert(idx2 == 1);
-  return stack2[idx2-1];
+  return stack2[0];
 }
 
 double
@@ -213,7 +222,7 @@ eval_suffix_expr (char expression[], CAL_ERROR *cal_error)
   convert_to_suffix ();
   rtv = calculate_suffix ();
 
-  idx = idx2 = k = si = 0;
+  idx = k = si = 0;
   *cal_error = ERROR;
   return rtv;
 }
