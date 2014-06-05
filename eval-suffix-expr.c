@@ -4,6 +4,10 @@
 #include <assert.h>
 #include <stdlib.h>
 
+#include "eval-suffix-expr.h"
+
+CAL_ERROR ERROR;
+
 typedef enum
   {
     false = 0,
@@ -30,7 +34,8 @@ typedef struct
 item items[20];
 int k;                          /* index for items */
 
-void convert_items (char expression[])
+void
+convert_items (char expression[])
 {
   int i;
   int j;
@@ -181,7 +186,12 @@ calculate_suffix ()
         break;
       case '/':
         tmp = pop2();
-        assert (tmp != 0);
+        if (tmp == 0)
+          {
+            ERROR.code = 1;
+            ERROR.message = strdup("Error: div-by-zero");
+            return 0.0;
+          }
         push2 (pop2 () / tmp);
         break;
       default:
@@ -195,7 +205,7 @@ calculate_suffix ()
 }
 
 double
-eval_suffix_expr (char expression[])
+eval_suffix_expr (char expression[], CAL_ERROR *cal_error)
 {
   double rtv;
 
@@ -204,6 +214,6 @@ eval_suffix_expr (char expression[])
   rtv = calculate_suffix ();
 
   idx = idx2 = k = si = 0;
-
+  *cal_error = ERROR;
   return rtv;
 }

@@ -11,4 +11,4 @@ double rtv = eval_suffix_expr(expr);
 ```
 
 ### TODO
-- [ ] handle exceptions like divison by zero
+- [x] handle exceptions like divison by zero
