@@ -1,6 +1,6 @@
-# Evaluate infix expression with C
+## Evaluate infix expression with C
 
-## Usage
+### Usage
 For example, to evaluate "9+(3-1)*3+1.5/0.5":
 
 ```c
@@ -10,5 +10,5 @@ char expr[] = "9+(3-1)*3+1.5/0.5";
 double rtv = eval_suffix_expr(expr);
 ```
 
-## TODO
+### TODO
 - [ ] handle exceptions like divison by zero
