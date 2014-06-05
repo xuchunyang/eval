@@ -194,14 +194,16 @@ calculate_suffix ()
   return stack2[idx2-1];
 }
 
-int
-main (int argc, char *argv[])
+double
+eval_suffix_expr (char expression[])
 {
-  char expression[] = "9+(3-1)*3+1.55/0.5"; /* types: +-/() double */
+  double rtv;
 
   convert_items (expression);
   convert_to_suffix ();
-  printf ("%s = %.2f\n", expression, calculate_suffix ());
+  rtv = calculate_suffix ();
 
-  return 0;
+  idx = idx2 = k = si = 0;
+
+  return rtv;
 }
