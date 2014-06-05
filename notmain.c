@@ -5,21 +5,21 @@
 #include <stdlib.h>
 
 typedef enum
-{
+  {
     false = 0,
     true  = 1,
-} bool;
+  } bool;
 
 typedef enum
-{
-  ADD = '+',
-  MINUS = '-',
-  MULT = '*',
-  DIV = '/',
-  L_PARE = '(',
-  R_PARE = ')',
-  NUMBER = 'a',
-} item_type;
+  {
+    ADD = '+',
+    MINUS = '-',
+    MULT = '*',
+    DIV = '/',
+    L_PARE = '(',
+    R_PARE = ')',
+    NUMBER = 'a',
+  } item_type;
 
 typedef struct
 {
@@ -28,28 +28,23 @@ typedef struct
 } item;
 
 item items[20];
+int k;                          /* index for items */
 
-void convert_items ()
+void convert_items (char expression[])
 {
-  char expression[] = "9+(3-1)*3+10.3/2.1"; /* types: +-/() double */
   int i;
   int j;
-  int k;
   char buffer[10];              /* save a number */
   int buffer_i;
 
-
   k = 0;
   for (i = 0; i < strlen(expression); i++) {
-    /* printf ("%c\t", expression[i]); */
     if (isdigit (expression[i]))
       {
         j = i + 1;
         buffer_i = 0;
-        /* printf("%c", expression[i]); */
         buffer[buffer_i++] = expression[i];
         while (isdigit (expression[j]) || expression[j] == '.') {
-          /* printf ("%c", expression[j]); */
           buffer[buffer_i++] = expression[j];
           i = j;
           j++;
@@ -58,28 +53,15 @@ void convert_items ()
         items[k].type = NUMBER;
         items[k].data = atof (buffer);
         k++;
-        printf ("%.2f", atof (buffer));
-        printf (" ");
       }
     else
       {
         items[k].type = expression[i];
         items[k].data = expression[i];
         k++;
-        printf ("%c ", expression[i]);
       }
   }
-  printf ("\n\n=====check result====\n");
-  for (i = 0; i < k; i++) {
-    if (items[i].type == NUMBER)
-      printf ("%d: %.2f\n", i, items[i].data);
-    else
-      printf ("%d: %c\n", i, (char)items[i].data);
-  }
-
-
 }
-
 
 char stack[20];
 int idx;
@@ -108,55 +90,55 @@ higher_precedence (char a, char b)
     return false;
 }
 
-int
-main (int argc, char *argv[])
+item suffix[20];
+int si;                          /* index for suffix items */
+
+
+void
+convert_to_suffix ()
 {
-  convert_items ();
-  char expression[] = "9+(3-1)*3+1/2"; /* types: +-/() double */
   int i;
 
   idx = 0;
-  printf ("%s\n", expression);
-  for (i = 0; i < strlen (expression); i++) {
-    if (isdigit(expression[i]))
-      printf ("%c ", expression[i]);
+  for (i = 0; i < k; i++) {
+    if (items[i].type == NUMBER)
+      {
+        suffix[si++] = items[i];
+
+      }
     else
-      switch (expression[i]) {
+      switch (items[i].type) {
       case ')':
-        while (stack[idx-1] != '(')
-          printf ("%c ", pop());
+        while (stack[idx-1] != '(') {
+          suffix[si].type = suffix[si].data = pop ();
+          si++;
+        }
         pop ();                 /* pop '(', don't print */
         break;
       case '(':
         push ('(');
         break;
       default:                  /* +, -, *, / */
-        if (higher_precedence(stack[idx-1], expression[i]))
+        if (higher_precedence(stack[idx-1], items[i].type))
           {
             // print all stack
             while (idx != 0)
               {
-                printf ("%c ", pop ());
+                suffix[si].type = suffix[si].data = pop ();
+                si++;
               }
           }
-        push(expression[i]);
+        push(items[i].type);
         break;
       }
   }
   while (idx != 0)
     {
-      printf ("%c ", pop ());
+      suffix[si].type = suffix[si].data = pop ();
+      si++;
     }
 
-  printf ("\n\n=============\n");
-  double calculate_suffix ();
-  char t_suffix[] = "931-3*+12/+";
-  printf ("%s\n", t_suffix);
-  printf ("%f\n", calculate_suffix ());
-
-  return 0;
 }
-
 
 double stack2[20];
 int idx2;
@@ -182,12 +164,11 @@ calculate_suffix ()
   double tmp;
 
   idx2 = 0;
-  for (i = 0; items[i].type != 0; i++) {
-    /* printf ("%c", suffix[i]); */
-    if (items[i].type == NUMBER)
-      push2 (items[i].data);
+  for (i = 0; i < si; i++) {
+    if (suffix[i].type == NUMBER)
+      push2 (suffix[i].data);
     else
-      switch (items[i].type) {
+      switch (suffix[i].type) {
       case '+':
         push2 (pop2 () + pop2 ());
         break;
@@ -211,4 +192,16 @@ calculate_suffix ()
 
   assert(idx2 == 1);
   return stack2[idx2-1];
+}
+
+int
+main (int argc, char *argv[])
+{
+  char expression[] = "9+(3-1)*3+1.55/0.5"; /* types: +-/() double */
+
+  convert_items (expression);
+  convert_to_suffix ();
+  printf ("%s = %.2f\n", expression, calculate_suffix ());
+
+  return 0;
 }
