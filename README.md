@@ -15,8 +15,10 @@ if (cal_error.code != 0)      /* Error occurs! */
   {
     fprintf (stderr, "%s", cal_error.message);
   }
-printf ("The result of %s is %f\n", expr, rtv);
-
+else
+  {
+    printf ("The result of %s is %f\n", expr, rtv);
+  }
 ```
 
 ### TODO
