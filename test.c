@@ -1,12 +1,12 @@
 #include <stdio.h>
 #include <assert.h>
 
-#include "eval-suffix-expr.h"
+#include "eval.h"
 
 int
 main(int argc, char *argv[])
 {
-  char expr[] = "9+(3-1)*3+1.55/0.5";
+  char expr[] = "1+2*3";
   double rtv = 0.0;
   CAL_ERROR cal_error = {.code = 0, .message = ""};
 
