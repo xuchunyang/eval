@@ -23,4 +23,4 @@ else
 
 ### TODO
 - [x] handle exceptions like divison by zero
-- [ ] clean unnecessary functions
+- [-] clean unnecessary functions
